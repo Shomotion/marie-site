@@ -1,0 +1,1054 @@
+:root{
+  --black:#0a0908;
+  --cream:#f4f1ea;
+  --gold:#c9a24b;
+  --muted:#b9b3a6;
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Jost', Helvetica, Arial, sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+/* Deliberately not setting overscroll-behavior to anything but the
+   default ("auto") here. That default is what lets the browser's native
+   rubber-band/elastic overscroll run when scrolling past the top or
+   bottom of the page (this is a built-in feature of trackpad scrolling
+   in Safari/Chrome on macOS, and of touchscreens generally — not
+   something a site author codes). It tracks the actual gesture and
+   releases exactly on lift-off because the OS has real access to touch/
+   trackpad state that JavaScript does not, which is why it feels correct
+   in a way a hand-rolled JS approximation never quite manages. On
+   platforms without native elastic scrolling (Windows, most of Linux,
+   non-momentum mice), there's simply no bounce — same as most sites,
+   including the one this design is based on. */
+
+body{
+  background:var(--black);
+  color:var(--cream);
+  font-family:var(--sans);
+  overflow-x:hidden;
+}
+
+a{color:inherit;text-decoration:none;}
+
+/* ============ FIXED HERO LAYER ============
+   This is just the photo, position:fixed, so it never moves. The nav,
+   spacer, and content all live in .page, which scrolls normally on top
+   of it. */
+.hero-fixed{
+  position:fixed;
+  inset:0;
+  height:100vh;
+  width:100%;
+  z-index:1;
+  overflow:hidden;
+}
+
+.hero-bg{
+  position:absolute;
+  inset:0;
+  background-image:url('assets/hero.jpg');
+  background-size:cover;
+  background-position:center 20%;
+  z-index:0;
+}
+
+/* Biography uses its own photo instead of the shared hero image.
+   Same background-size/position as .hero-bg, just a different file. */
+body.bio-page .hero-bg{
+  background-image:url('assets/bio.jpg');
+}
+
+/* Contact likewise uses its own photo. */
+body.contact-page .hero-bg{
+  background-image:url('assets/contact.jpg');
+}
+
+/* subtle permanent darkening so nav/text stay legible over any photo.
+   This is deliberately light/vignette-style — Home only needs it near the
+   nav and where .hero-text sits, since the rest of Home is solid black
+   .content covering the photo anyway. */
+.hero-fixed::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.75) 100%);
+  z-index:1;
+  pointer-events:none;
+}
+
+/* Inner pages (Biography/Events/Media/Contact) never cover the photo with
+   solid black — .content stays transparent (see .content-overlay below)
+   for the entire scroll, all the way to the footer. Because .hero-fixed
+   is position:fixed at 100vh, it always fills whatever's currently in the
+   viewport, so this stronger, more uniform wash keeps text readable no
+   matter how far the user has scrolled or how long the page is. */
+body.page-inner .hero-fixed::after{
+  background:linear-gradient(180deg, rgba(8,7,6,.62) 0%, rgba(8,7,6,.5) 45%, rgba(8,7,6,.64) 100%);
+}
+
+/* ============ PAGE (scrolling frame of reference) ============
+   Wraps the nav, hero spacer, and content. This is a normal, non-fixed
+   element, so everything inside it — including the nav — scrolls up
+   together at the same rate. It only needs to sit above .hero-fixed in
+   the stacking order so the photo shows through where .page is
+   transparent (over the nav and the spacer). */
+.page{
+  position:relative;
+  z-index:2;
+}
+
+/* ---------- Nav ----------
+   Normal flow now (not fixed/absolute) so it scrolls at the same speed
+   as everything else in .page instead of staying pinned to the photo. */
+.nav{
+  position:relative;
+  z-index:10; /* .content below has its own stacking context at z-index:2;
+                 this keeps the mobile dropdown menu (a descendant of
+                 .nav) painting above it rather than getting covered */
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:2rem 3.5rem;
+}
+
+.logo{
+  display:flex;
+  opacity:.9;
+  transition:opacity .25s ease;
+}
+
+.logo:hover{
+  opacity:1;
+}
+
+.logo img{
+  display:block;
+  width:30px;
+  height:30px;
+  object-fit:contain; /* the cropped source is ~38x44, not perfectly
+                          square — this keeps it from being stretched
+                          into a distorted square */
+}
+
+.nav-links{
+  display:flex;
+  gap:2.75rem;
+}
+
+.nav-links a{
+  font-size:.75rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--cream);
+  opacity:.85;
+  padding-bottom:.35rem;
+  border-bottom:1px solid transparent;
+  transition:opacity .25s ease, border-color .25s ease, color .25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active{
+  opacity:1;
+  color:var(--gold);
+  border-color:var(--gold);
+}
+
+.socials{
+  display:flex;
+  gap:1.1rem;
+}
+
+.socials a{
+  color:var(--cream);
+  opacity:.85;
+  display:flex;
+  transition:opacity .25s ease;
+}
+.socials a:hover{opacity:1;}
+
+/* Mobile menu toggle — hidden on desktop; the @media block below shows
+   it in place of .socials, which is hidden at the same breakpoint. */
+.nav-toggle{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:2.25rem;
+  height:2.25rem;
+  padding:0;
+  background:none;
+  border:none;
+  color:var(--cream);
+  cursor:pointer;
+}
+
+.nav-toggle svg{display:block;}
+.nav-toggle svg[hidden]{display:none;} /* without this, .nav-toggle svg's
+  own specificity beats the browser's default [hidden]{display:none} rule,
+  so both icons stay visible regardless of the hidden attribute */
+
+/* Slide-down mobile menu panel — hidden entirely on desktop; on mobile
+   it's always in the DOM but collapsed to max-height:0 until nav.js
+   adds .is-open. */
+.mobile-menu{
+  display:none;
+}
+
+.mobile-menu-links{
+  list-style:none;
+}
+
+.mobile-menu-links a{
+  display:block;
+  font-size:.85rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--cream);
+  opacity:.85;
+}
+
+.mobile-menu-links a.active,
+.mobile-menu-links a:hover{
+  opacity:1;
+  color:var(--gold);
+}
+
+/* ---------- Hero text ----------
+   Lives inside .content (not .hero-fixed), positioned absolutely at the
+   same top offset as .content-gradient so it sits right where the fade
+   begins — and because it's part of the scrolling content, it travels
+   up together with the gradient instead of staying pinned to the photo. */
+.hero-text{
+  position:absolute;
+  top:-42vh;
+  left:0;
+  right:0;
+  z-index:2;
+  padding-top:6vh;
+  text-align:center;
+}
+
+.hero-text h1{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(2.4rem, 6vw, 5rem);
+  letter-spacing:.04em;
+  line-height:1;
+}
+
+.hero-text .subtitle{
+  font-family:var(--serif);
+  font-size:clamp(1rem, 1.6vw, 1.4rem);
+  letter-spacing:.5em;
+  text-transform:uppercase;
+  margin-top:1.1rem;
+  padding-left:.5em; /* optical centering against the extra letter-spacing */
+  color:var(--muted);
+}
+
+/* ============ SCROLL SPACER ============
+   Height of pure image before the black content starts sliding up.
+   Increase/decrease to control how much of the photo is seen first. */
+.hero-spacer{
+  height:100vh;
+}
+
+/* ============ SCROLLING CONTENT ============
+   Sits in normal document flow (not fixed), so it scrolls up and
+   covers .hero-fixed underneath it as the user scrolls down. */
+.content{
+  position:relative;
+  z-index:2;
+  background:var(--black);
+}
+
+/* the fade-to-black that visually "moves over" the fixed photo.
+   position:absolute (not a negative margin) so it can overlap upward
+   into the hero without dragging .content's own black background along
+   with it via margin collapsing. Home only — inner pages have no fade. */
+.content-gradient{
+  position:absolute;
+  top:-42vh;
+  left:0;
+  right:0;
+  height:42vh;
+  background:linear-gradient(180deg, rgba(10,9,8,0) 0%, rgba(10,9,8,1) 92%);
+  pointer-events:none;
+  z-index:1;
+}
+
+/* ============ OVERLAY CONTENT (inner pages) ============
+   Biography / Events / Media / Contact don't cover the photo with a
+   solid black panel the way Home's .content does. The photo stays fully
+   visible and fixed the whole way down — this wrapper sits at the same
+   z-level as the nav and footer (transparent, directly over the image)
+   rather than sliding a black sheet over it. There's no .hero-spacer
+   before it either: content starts right under the nav and you can
+   scroll it as far as it goes, with the footer arriving whenever the
+   content runs out — the photo itself never changes underneath it.
+   Individual panels (.section, .event-card) get their own translucent
+   scrim so text stays legible over whatever part of the photo happens
+   to be behind it at any given scroll position, without hiding the
+   image the way a fully opaque background would. */
+.content-overlay{
+  position:relative;
+  z-index:2;
+  background:transparent;
+}
+
+.content-overlay .section{
+  background:rgba(10,9,8,.6);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:none;
+  margin-bottom:1.5rem;
+}
+
+.content-overlay .section:last-of-type{margin-bottom:0;}
+
+/* the lead heading and any wide layout wrapper stay plain text over the
+   photo, like the nav — only the dense body-copy panels need the scrim */
+.content-overlay .page-lead,
+.content-overlay .section.section-wide{
+  background:none;
+  backdrop-filter:none;
+}
+
+.content-overlay .event-card{
+  background:rgba(10,9,8,.6);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+.section{
+  max-width:760px;
+  margin:0 auto;
+  padding:8rem 2rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.section:last-of-type{border-bottom:none;}
+
+/* The first section on inner pages (Biography/Events/Media/Contact) —
+   just the eyebrow + page title, sitting right under the nav. Tighter
+   padding than a regular .section (no viewport-height spacer precedes it
+   anymore) and no divider, since it reads as one unit with the section
+   right after it. */
+.page-lead{
+  padding-top:7rem;
+  padding-bottom:1rem;
+  border-bottom:none;
+}
+
+.page-lead h2{
+  margin-bottom:0;
+  text-shadow:0 2px 24px rgba(0,0,0,.55);
+}
+
+/* Wider variant for grid content (events, media) that shouldn't be
+   squeezed into the ~760px reading-width column. */
+.section-wide{max-width:1320px;}
+
+.eyebrow{
+  display:block;
+  font-size:.72rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:1.2rem;
+}
+
+.section h2{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+  line-height:1.2;
+  margin-bottom:1.75rem;
+}
+
+.section p{
+  font-family:var(--serif);
+  font-size:1.15rem;
+  line-height:1.75;
+  color:var(--muted);
+  margin-bottom:1.25rem;
+  max-width:60ch;
+}
+
+/* Home: the biography blurb reads as a short centered pull-quote rather
+   than a labeled section like Events/Media/Contact below it. Scoped to
+   #biography, which only exists on index.html — biography.html's own
+   section has no id, so this doesn't touch that page. */
+#biography{
+  text-align:center;
+  max-width:900px; /* wider than the default .section 760px, so lines can run longer */
+}
+
+#biography p{
+  margin-left:auto;
+  margin-right:auto;
+  max-width:80ch; /* wider than the default .section p 60ch */
+}
+
+/* ---------- Events ---------- */
+
+/* Flat list — used on Home's single-page summary section */
+.event-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+}
+
+.event-list li{
+  display:flex;
+  gap:2rem;
+  padding:1.4rem 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  font-family:var(--serif);
+  font-size:1.1rem;
+}
+
+.event-list li:last-child{border-bottom:1px solid rgba(255,255,255,.08);}
+
+.event-date{
+  color:var(--gold);
+  min-width:8rem;
+  letter-spacing:.03em;
+}
+
+/* Card grid — used on the standalone events.html page */
+.event-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+  gap:1.75rem 1.5rem;
+  align-items:start; /* cards keep their own height instead of stretching
+                         to match the tallest one in the row */
+}
+
+.event-card{
+  padding:2.1rem 1.85rem 2rem;
+  background:rgba(10,9,8,.72); /* dark and opaque enough to hold contrast
+                                   on its own, wherever it lands on the photo */
+  border:1px solid rgba(255,255,255,.12);
+  border-top:2px solid rgba(201,162,75,.5); /* a fixed accent, not something
+                                                 that depends on the photo */
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 18px 40px -14px rgba(0,0,0,.6); /* lifts the card off the
+                                                    photo rather than reading
+                                                    as text floating on it */
+  transition:border-color .25s ease, background .25s ease,
+             transform .25s ease, box-shadow .25s ease;
+}
+
+.event-card:hover{
+  border-color:rgba(201,162,75,.55);
+  border-top-color:var(--gold);
+  background:rgba(10,9,8,.84);
+  transform:translateY(-4px);
+  box-shadow:0 24px 50px -14px rgba(0,0,0,.7);
+}
+
+.event-card-date{
+  display:block;
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  padding-bottom:.9rem;
+  margin-bottom:1rem;
+  border-bottom:1px solid rgba(255,255,255,.1); /* separates "when" from
+                                                     "what", the missing
+                                                     hierarchy that made the
+                                                     stacked text feel flat */
+}
+
+.event-card h3{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:1.5rem;
+  line-height:1.25;
+  margin-bottom:.4rem;
+
+  /* Reserves space for the longest realistic title (currently "Innsbrucker
+     Festwochen der Alten Musik" at 3 lines) on every card, short titles
+     included — so the date/title/location block is the same height
+     everywhere, and one long title can't make its grid row taller than
+     its neighbors (CSS Grid sizes a row to its tallest item regardless
+     of align-items, which only controls alignment *within* the row, not
+     the row's own height). If a future title is somehow longer than
+     this, it's truncated with an ellipsis rather than growing the card
+     — bump both numbers below together if that starts happening. */
+  min-height:calc(1.25em * 3);
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  line-clamp:3;
+  overflow:hidden;
+}
+
+.event-card p{
+  font-family:var(--serif);
+  color:var(--muted);
+  font-size:1.05rem;
+}
+
+/* "Details" trigger — opens the card's <dialog> */
+.event-card-more{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  margin-top:1.1rem;
+  padding:0;
+  background:none;
+  border:none;
+  font-family:var(--sans);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  cursor:pointer;
+  opacity:.85;
+  transition:opacity .2s ease, gap .2s ease;
+}
+
+.event-card-more::after{
+  content:'\2192'; /* → */
+  font-size:.85rem;
+}
+
+.event-card-more:hover{
+  opacity:1;
+  gap:.6rem;
+}
+
+/* Reusable outline button (Tickets, etc.) */
+.btn{
+  display:inline-block;
+  margin-top:1.4rem;
+  padding:.7rem 1.6rem;
+  border:1px solid rgba(255,255,255,.3);
+  font-family:var(--sans);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--cream);
+  transition:border-color .2s ease, background .2s ease, color .2s ease;
+}
+
+.btn:hover{
+  border-color:var(--gold);
+  background:var(--gold);
+  color:var(--black);
+}
+
+/* ---------- Event detail dialog ----------
+   Opened via dialog.showModal() from events.html's inline script.
+   Rendered in the browser's top layer — independent of the grid, so
+   opening it never reflows or leaves gaps under other cards. */
+dialog.event-dialog{
+  position:fixed;
+  top:50%;
+  left:50%;
+  margin:0; /* the site's *{margin:0} reset already zeroes this, but
+               stated explicitly since we're overriding the browser's
+               default centering technique (which relies on margin:auto)
+               with our own top/left/transform approach below */
+  max-width:480px;
+  width:calc(100% - 3rem);
+  max-height:calc(100vh - 4rem);
+  overflow-y:auto;
+  padding:2.5rem 2.25rem 2.25rem;
+  background:rgba(12,11,9,.94);
+  color:var(--cream);
+  border:1px solid rgba(255,255,255,.14);
+  border-top:2px solid var(--gold);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.7);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  /* Progressive-enhancement fade/scale on open — unsupported browsers
+     just show/hide the dialog instantly, which is a perfectly fine
+     fallback. translate(-50%, -50%) does the centering; the extra
+     translateY(10px) scale(.98) is just the "closed" animation offset,
+     folded into the same transform. */
+  opacity:0;
+  transform:translate(-50%, -50%) translateY(10px) scale(.98);
+  transition:opacity .22s ease, transform .22s ease,
+             overlay .22s ease allow-discrete, display .22s ease allow-discrete;
+}
+
+dialog.event-dialog[open]{
+  opacity:1;
+  transform:translate(-50%, -50%) scale(1);
+}
+
+@starting-style{
+  dialog.event-dialog[open]{
+    opacity:0;
+    transform:translate(-50%, -50%) translateY(10px) scale(.98);
+  }
+}
+
+dialog.event-dialog::backdrop{
+  background:rgba(5,4,3,.72);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+
+dialog.event-dialog .event-card-date{
+  border-bottom:none;
+  padding-bottom:0;
+  margin-bottom:.5rem;
+}
+
+dialog.event-dialog h3{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:1.6rem;
+  margin-bottom:1.75rem;
+  padding-bottom:1.25rem;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.dialog-close{
+  position:absolute;
+  top:1rem;
+  right:1.1rem;
+  width:2rem;
+  height:2rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:none;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:50%;
+  color:var(--cream);
+  font-size:1.1rem;
+  line-height:1;
+  cursor:pointer;
+  transition:border-color .2s ease, color .2s ease;
+}
+
+.dialog-close:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+
+/* One performance instance inside a dialog — date/time, venue, tickets.
+   Repeat this block for events with multiple dates (a residency, a
+   run of shows); each one gets its own divider except the first. */
+.event-instance + .event-instance{
+  margin-top:1.5rem;
+  padding-top:1.5rem;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+
+.event-instance-heading{
+  font-family:var(--serif);
+  font-style:italic;
+  color:var(--gold);
+  font-size:1.05rem;
+  margin-bottom:.4rem !important;
+}
+
+.event-instance-details{
+  font-size:1.02rem;
+  line-height:1.6;
+}
+
+/* ---------- Media ---------- */
+
+/* Full-bleed hero band: the carousel itself is the visual interest on
+   this page (unlike every other inner page, which sits on a fixed
+   background photo), so it runs edge-to-edge rather than being
+   contained inside .section-wide's max-width. "Media" is overlaid
+   directly on top of it, the way a hero title normally sits on a
+   static photo — except what's behind it keeps changing, hence the
+   scrim staying on regardless of which image is currently active. */
+.media-hero{
+  position:relative;
+  width:100%;
+  height:78vh;
+  min-height:420px;
+  overflow:hidden;
+  background:var(--black);
+}
+
+/* Photo carousel — every image is stacked in the same box; only the
+   .is-active one is visible, and the opacity transition on .carousel img
+   is what produces the dissolve when carousel.js swaps the active class
+   every few seconds. */
+.carousel{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.carousel img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity 1.4s ease;
+}
+
+.carousel img.is-active{
+  opacity:1;
+}
+
+.carousel-empty-note{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--serif);
+  font-style:italic;
+  color:var(--muted);
+  text-align:center;
+  padding:2rem;
+}
+
+.media-hero-scrim{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(10,9,8,.1) 0%, rgba(10,9,8,.5) 100%);
+  pointer-events:none;
+}
+
+.media-hero-title{
+  position:absolute;
+  inset:0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(2.4rem, 6vw, 5rem);
+  letter-spacing:.04em;
+  color:var(--cream);
+  text-shadow:0 4px 30px rgba(0,0,0,.6);
+  pointer-events:none;
+}
+
+.media-videos{
+  padding-top:5rem;
+}
+
+/* 2x2 grid of YouTube embeds below the carousel */
+.video-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:1.5rem;
+}
+
+.video-embed{
+  position:relative;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:var(--black);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.video-embed iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.placeholder-note{
+  margin-top:2rem;
+  font-family:var(--serif);
+  font-style:italic;
+  color:var(--muted);
+  opacity:.7;
+}
+
+/* ---------- Contact ---------- */
+.email{
+  display:inline-block;
+  margin-top:.5rem;
+  font-family:var(--serif);
+  font-size:1.3rem;
+  color:var(--gold);
+  border-bottom:1px solid var(--gold);
+  padding-bottom:.15rem;
+}
+
+.contact-form{
+  max-width:560px;
+  margin-top:3rem;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+
+.form-row{
+  display:flex;
+  gap:1.5rem;
+}
+
+.form-row .form-field{
+  flex:1;
+}
+
+.form-field{
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+}
+
+.form-field label{
+  font-family:var(--sans);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+
+.form-field input,
+.form-field textarea{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  color:var(--cream);
+  background:transparent;
+  border:none;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  padding:.6rem 0;
+  transition:border-color .2s ease;
+}
+
+.form-field textarea{
+  resize:vertical;
+  min-height:8rem;
+}
+
+.form-field input:focus,
+.form-field textarea:focus{
+  outline:none;
+  border-color:var(--gold);
+}
+
+/* Honeypot — off-screen rather than display:none, since some spam bots
+   skip fields hidden that way; kept out of tab order and out of
+   assistive-tech announcements either way. */
+.form-honeypot{
+  position:absolute;
+  left:-9999px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
+.contact-form .btn{
+  align-self:flex-start;
+  background:none;
+  cursor:pointer;
+}
+
+.contact-form .btn:disabled{
+  opacity:.5;
+  cursor:default;
+}
+
+.form-status{
+  font-family:var(--sans);
+  font-size:.85rem;
+  color:var(--muted);
+  min-height:1.2em;
+  margin:0;
+}
+
+.form-status.is-success{color:var(--gold);}
+.form-status.is-error{color:#e08a7d;}
+
+.footer{
+  text-align:center;
+  padding:3rem 2rem 4rem;
+  font-size:.75rem;
+  letter-spacing:.08em;
+  color:var(--muted);
+  opacity:.75;
+}
+
+/* ============ BIOGRAPHY PAGE — two-zone layout ============
+   Every rule below is scoped to body.bio-page, so Events/Media/Contact
+   keep the original full-bleed-photo-with-scrim treatment untouched.
+
+   Instead of the photo running full-bleed behind scrimmed text panels,
+   Biography gives the photo its own fixed lane on the right — bright,
+   no scrim, framed the way a photo in a box normally is — and puts the
+   copy in a plain solid-black column on the left that never overlaps
+   it. Because that text column paints its own background, the photo
+   panel underneath only shows through on the right, where nothing is
+   drawn over it. */
+
+body.bio-page .hero-fixed{
+  width:46vw;
+  left:auto;
+  right:0;
+}
+
+/* Reframe the portrait-orientation photo (1709x2560) inside its now-
+   narrower box. Tune the vertical percentage to taste — lower keeps
+   more of the top of the image (face/hands) in frame, higher shows
+   more of what's below. */
+body.bio-page .hero-bg{
+  background-position:center 12%;
+}
+
+/* No uniform dark wash across the photo — it should read bright, like
+   the reference. Two small, local fades instead: one along the seam
+   where the photo panel meets the text column, so the edge isn't a
+   hard cut; one at the very top, just enough to keep the nav readable
+   where it crosses over the photo (the nav still spans the full page
+   width, over both zones). */
+body.bio-page .hero-fixed::after{
+  background:
+    linear-gradient(90deg, rgba(8,7,6,.55) 0%, rgba(8,7,6,0) 14%),
+    linear-gradient(180deg, rgba(8,7,6,.45) 0%, rgba(8,7,6,0) 16%);
+}
+
+/* Text column: left-aligned, fixed width, sitting entirely on the
+   page's solid black background rather than centered across the full
+   width the way other inner pages are. */
+body.bio-page .content-overlay .page-lead,
+body.bio-page .content-overlay .section{
+  margin:0;
+  max-width:600px;
+  padding-left:3.5rem;
+  padding-right:2.5rem;
+}
+
+/* The scrim/blur other inner-page panels need (because their text can
+   land anywhere on the photo) isn't needed here — this column never
+   sits on top of the photo, so it can just be plain. */
+body.bio-page .content-overlay .section{
+  background:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  margin-bottom:0;
+}
+
+body.bio-page .footer{
+  text-align:left;
+  padding-left:3.5rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:820px){
+  .nav{padding:1.5rem 1.5rem;}
+  .nav-links{display:none;}
+
+  /* The subject sits in the right third of hero.jpg. Centering the crop
+     horizontally (the desktop default) works fine on a wide viewport,
+     but on a narrow/tall one it shows mostly the empty left side of the
+     photo and cuts the subject off the right edge. Shifting the crop's
+     focal point right keeps them in frame. Scoped to the plain .hero-bg
+     rule, so it doesn't affect body.bio-page's own background-position
+     override (that rule is more specific and still wins there). */
+  .hero-bg{
+    background-position:81% 20%;
+  }
+
+  /* Socials are replaced by the menu toggle on mobile; the toggle
+     itself is hidden on desktop by .nav-toggle's base display:none. */
+  .socials{display:none;}
+  .nav-toggle{display:flex;}
+
+  .mobile-menu{
+    display:block;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:rgba(10,9,8,.97);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+    /* no border here — max-height:0 clips the content but not a border,
+       so a border defined on the base rule would show as a persistent
+       thin line even while collapsed. It's added only in .is-open below. */
+  }
+
+  .mobile-menu.is-open{
+    max-height:22rem; /* comfortably fits 5 links; bump this if the nav
+                          grows more entries than that */
+    border-top:1px solid rgba(255,255,255,.1);
+  }
+
+  .mobile-menu-links{
+    display:flex;
+    flex-direction:column;
+    padding:.5rem 1.5rem 1.5rem;
+  }
+
+  .mobile-menu-links a{
+    padding:.9rem 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .mobile-menu-links li:last-child a{
+    border-bottom:none;
+  }
+
+  .hero-text{padding-top:8vh;}
+  .hero-text .subtitle{letter-spacing:.35em;}
+  .section{padding:5rem 1.5rem;}
+  .video-grid{grid-template-columns:1fr;}
+  .form-row{flex-direction:column;gap:1.5rem;}
+  .media-hero{height:52vh;min-height:320px;}
+  .event-grid{grid-template-columns:1fr;}
+
+  /* Biography: the side-by-side split needs desktop width to work.
+     Below 820px, fall back to the same full-bleed-with-scrim pattern
+     the other inner pages use, so the photo becomes a shorter band up
+     top and the text stacks below it, full width. */
+  body.bio-page .hero-fixed{
+    width:100%;
+    left:0;
+    right:0;
+  }
+
+  body.bio-page .hero-fixed::after{
+    background:linear-gradient(180deg, rgba(8,7,6,.62) 0%, rgba(8,7,6,.5) 45%, rgba(8,7,6,.64) 100%);
+  }
+
+  body.bio-page .content-overlay .page-lead,
+  body.bio-page .content-overlay .section{
+    max-width:none;
+    padding-left:1.5rem;
+    padding-right:1.5rem;
+  }
+
+  /* Unlike Events/Media/Contact, Biography's body copy stays plain text
+     directly on the (already darkened by the ::after scrim above)
+     photo on mobile too — no floating translucent panel, and no gap
+     between it and the title, which is what made the panel read as an
+     accident rather than a deliberate design choice. The text-shadow is
+     a small legibility safety net now that there's no panel background
+     behind it to guarantee contrast. */
+  body.bio-page .content-overlay .section p{
+    text-shadow:0 1px 12px rgba(0,0,0,.55);
+  }
+
+  body.bio-page .footer{
+    text-align:center;
+    padding-left:2rem;
+  }
+
+  dialog.event-dialog{
+    padding:2.25rem 1.5rem 1.75rem;
+  }
+}

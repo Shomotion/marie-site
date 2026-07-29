@@ -1,0 +1,105 @@
+[
+  {
+    "id": "quartet0",
+    "date": "28 Jul 2026",
+    "title": "Quartet Novalis",
+    "location": "New Hampshire",
+    "performances": [
+      {
+        "when": "Tue, 28 Jul 2026 &middot; 7:30 PM",
+        "venue": "Apple Hill Center for Chamber Music",
+        "link": { "label": "Concert Info", "url": "https://applehill.org/concerts/concerts-apple-hill/" }
+      }
+    ]
+  },
+  {
+    "id": "quartet1",
+    "date": "31 Jul-2 Aug 2026",
+    "title": "Quartet Novalis",
+    "location": "Antrim, New Hampshire",
+    "performances": [
+      {
+        "when": "Fri, 31 Jul 2026 &middot; 7:30 PM",
+        "venue": "Antrim Town Hall",
+        "link": { "label": "Concert Info", "url": "https://silentwoodscollective.org/event/silentwoods-collective-presents-quartet-novalis/" }
+      }
+    ]
+  },
+  {
+    "id": "innsbruck",
+    "date": "7-26 Aug 2026",
+    "title": "Innsbrucker Festwochen der Alten Musik",
+    "location": "Innsbruck, Austria",
+    "performances": [
+      {
+        "when": "21 Aug &middot; 7 PM"
+      },
+      {
+        "when": "23 Aug &middot; 4 PM"
+      }, 
+      {
+        "when": "25 Aug &middot; 7 PM"
+      },
+      {
+        "when": "26 Aug &middot; 7 PM",
+        "link": { "label": "Tickets and Info", "url": "https://www.altemusik.at/en/events/atalanta" }
+      }
+    ]
+  },
+  {
+    "id": "lachrymae0",
+    "date": "29 Aug 2026",
+    "title": "Ensemble Lachrymae",
+    "location": "Altenburg, Germany",
+    "performances": [
+      {
+        "work": "Bach: B Minor Mass",
+        "when": "29 Aug &middot; 7:30 PM",
+        "venue": "Schlosskirche",
+        "link": { "label": "Tickets and Info", "url": "https://orgelgesellschaft.de/veranstaltungen-details/j-s-bach-messe-in-h-moll-2" }
+      }
+    ]
+  },
+  {
+    "id": "lachrymae1",
+    "date": "30 Aug 2026",
+    "title": "Ensemble Lachrymae",
+    "location": "Halle, Germany",
+    "performances": [
+      {
+        "work": "Bach: B Minor Mass",
+        "when": "30 Aug &middot; 5:00 PM",
+        "venue": "Marktkirche",
+        "link": { "label": "Tickets", "url": "https://www.reservix.de/tickets-jsbach-h-moll-messe-in-halle-marktkirche-st-marien-unser-lieben-frauen-zu-halle-saale-am-30-8-2026/e2576896" }
+      }
+    ]
+  },
+  {
+    "id": "chamber-series-zurich",
+    "date": "03 Oct 2026",
+    "title": "Chamber Series",
+    "location": "Tonhalle, Z\u00fcrich",
+    "performances": [
+      {
+        "work": null,
+        "when": "Sat, 03 Oct 2026 &middot; 7:00 PM",
+        "venue": "Tonhalle, Z\u00fcrich &mdash; Gotthardstrasse 5, 8002 Z\u00fcrich",
+        "link": { "label": "Tickets", "url": "#" }
+      }
+    ]
+  },
+  {
+    "id": "concerto-evening-luzern",
+    "date": "21 Nov 2026",
+    "title": "Concerto Evening",
+    "location": "KKL, Luzern",
+    "performances": [
+      {
+        "work": null,
+        "when": "Sat, 21 Nov 2026 &middot; 7:30 PM",
+        "venue": "KKL, Luzern &mdash; Europaplatz 1, 6005 Luzern",
+        "link": { "label": "Tickets", "url": "#" }
+      }
+    ]
+  }
+]
