@@ -14,7 +14,7 @@
   },
   {
     "id": "quartet1",
-    "date": "31 Jul-2 Aug 2026",
+    "date": "31 Jul 2026",
     "title": "Quartet Novalis",
     "location": "Antrim, New Hampshire",
     "performances": [
@@ -75,30 +75,136 @@
     ]
   },
   {
-    "id": "chamber-series-zurich",
-    "date": "03 Oct 2026",
-    "title": "Chamber Series",
-    "location": "Tonhalle, Z\u00fcrich",
+    "id": "erasmus0",
+    "date": "13 Sep 2026",
+    "title": "Erasmus Klingt! Festival Lab",
+    "location": "Basel, Switzerland",
     "performances": [
       {
         "work": null,
-        "when": "Sat, 03 Oct 2026 &middot; 7:00 PM",
-        "venue": "Tonhalle, Z\u00fcrich &mdash; Gotthardstrasse 5, 8002 Z\u00fcrich",
-        "link": { "label": "Tickets", "url": "#" }
+        "when": "Sun, 13 Sep 2026 &middot; 6:00 PM",
+        "venue": "Don Bosco Basel, Paul Sacher Saal",
+        "link": { "label": "Concert Info", "url": "https://www.erasmus-klingt.ch/home/detailpage?detail=634&cHash=4c5d9a6815c1c32b3a2240a5a68bb98f" }
       }
     ]
   },
   {
-    "id": "concerto-evening-luzern",
-    "date": "21 Nov 2026",
-    "title": "Concerto Evening",
-    "location": "KKL, Luzern",
+    "id": "insula0",
+    "date": "23-26 Sep 2026",
+    "title": "Insula Camerata",
+    "location": "France",
     "performances": [
       {
-        "work": null,
-        "when": "Sat, 21 Nov 2026 &middot; 7:30 PM",
-        "venue": "KKL, Luzern &mdash; Europaplatz 1, 6005 Luzern",
-        "link": { "label": "Tickets", "url": "#" }
+        "work": "Beethoven: Eroica Symphony",
+        "when": "Wed, 23 Sep 2026 &middot; 8:00 PM",
+        "venue": "Maison de la Culture, Bourges"
+      },
+      {
+        "work": "Beethoven: Eroica Symphony",
+        "when": "Fri, 25 Sep 2026 &middot; 8:00 PM",
+        "venue": "La Seine Musicale, Boulogne-Billancourt"
+      },
+      {
+        "work": "Beethoven: Eroica Symphony",
+        "when": "Sat, 26 Sep 2026 &middot; 6:00 PM",
+        "venue": "La Seine Musicale, Boulogne-Billancourt",
+        "link": { "label": "Tickets and Info", "url": "https://www.insulaorchestra.fr/en/evenement/beethoven-eroica-3/" }
+      }
+    ]
+  },
+  {
+    "id": "fiori",
+    "date": "06 Oct 2026",
+    "title": "Chamber Concert",
+    "location": "Dresden, Germany",
+    "performances": [
+      {
+        "work": "Fiori musicali – instrumental music around 1600",
+        "when": "Tue, 06 Oct 2026 &middot; 7:00 PM",
+        "venue": "Marcolini-Palais Festsaal",
+        "link": { "label": "Tickets and Info", "url": "https://www.klinikum-dresden.de/veranstaltung/kammerkonzert-im-marcolini-palais-2-2-1-2-2-1-1-1-6" }
+      }
+    ]
+  },
+  {
+    "id": "quartet2",
+    "date": "23 Oct 2026",
+    "title": "Quartet Novalis",
+    "location": "Seattle, WA",
+    "performances": [
+      {
+        "work": "Early Music America Emerging Artists Showcase",
+        "when": "Fri, 23 Oct 2026 &middot; 7:30 PM",
+        "venue": "University Presbyterian Church, Seattle, WA",
+        "link": { "label": "Concert Info", "url": "https://www.earlymusicamerica.org/festival-showcase/showcase/" }
+      }
+    ]
+  },
+  {
+    "id": "quartet3",
+    "date": "25 Oct 2026",
+    "title": "Quartet Novalis",
+    "location": "Carmel, CA",
+    "performances": [
+      {
+        "work": "Early Music America Emerging Artists Showcase",
+        "when": "Fri, 25 Oct 2026 &middot; 7:30 PM",
+        "venue": "University Presbyterian Church, Seattle, WA",
+        "link": { "label": "Concert Info", "url": "https://www.earlymusicamerica.org/festival-showcase/showcase/" }
+      }
+    ]
+  },
+  {
+    "id": "leipzig0",
+    "date": "04 Dec 2026",
+    "title": "Leipzig Baroque Orchestra",
+    "location": "Leipzig, Germany",
+    "performances": [
+      {
+        "work": "Bach: Christmas Oratorio",
+        "when": "Fri, 04 Dec 2026 &middot; 8:00 PM",
+        "venue": "Thomaskirche"
+      }
+    ]
+  },
+  {
+    "id": "leipzig1",
+    "date": "05 Dec 2026",
+    "title": "Leipzig Baroque Orchestra",
+    "location": "Leipzig, Germany",
+    "performances": [
+      {
+        "work": "Bach: Christmas Oratorio",
+        "when": "Sat, 05 Dec 2026 &middot; 8:00 PM",
+        "venue": "Thomaskirche"
+      }
+    ]
+  },
+  {
+    "id": "insula1",
+    "date": "25 Mar 2026",
+    "title": "Insula Camerata",
+    "location": "Paris, France",
+    "performances": [
+      {
+        "work": "Beethoven: Pastoral Symphony",
+        "when": "Thu, 25 Mar 2027 &middot; 8:00 PM",
+        "venue": "La Seine Musicale, Boulogne-Billancourt",
+        "link": { "label": "Tickets and Info", "url": "https://www.insulaorchestra.fr/evenement/beethoven-la-pastorale/" }
+      }
+    ]
+  },
+  {
+    "id": "insula2",
+    "date": "26 Mar 2026",
+    "title": "Insula Camerata",
+    "location": "Paris, France",
+    "performances": [
+      {
+        "work": "Beethoven: Pastoral Symphony",
+        "when": "Fri, 26 Mar 2027 &middot; 8:00 PM",
+        "venue": "La Seine Musicale, Boulogne-Billancourt",
+        "link": { "label": "Tickets and Info", "url": "https://www.insulaorchestra.fr/evenement/beethoven-la-pastorale/" }
       }
     ]
   }

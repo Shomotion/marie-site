@@ -61,9 +61,13 @@ body.bio-page .hero-bg{
   background-image:url('assets/bio.jpg');
 }
 
-/* Contact likewise uses its own photo. */
+/* Contact likewise uses its own photo. Lower vertical % than the shared
+   default (20%) keeps more of the top of the image in frame, so the
+   subject's face sits above the form box instead of behind it. Tune
+   to taste against the actual photo. */
 body.contact-page .hero-bg{
   background-image:url('assets/contact.jpg');
+  background-position:center 32%;
 }
 
 /* subtle permanent darkening so nav/text stay legible over any photo.
@@ -390,6 +394,86 @@ body.page-inner .hero-fixed::after{
   margin-left:auto;
   margin-right:auto;
   max-width:80ch; /* wider than the default .section p 60ch */
+}
+
+/* ---------- Home: events preview (image + first few events) ----------
+   Sits below #biography. #biography is a centered pull-quote, but this
+   section reverts to the standard left-aligned .section heading treatment
+   — just with its h2 set uppercase to match the reference layout. */
+.events-preview-inner{
+  display:flex;
+  gap:3rem;
+  margin-top:2.75rem;
+}
+
+.events-preview-image{
+  flex:0 0 300px;
+  aspect-ratio:3/4;
+  overflow:hidden;
+}
+
+.events-preview-image img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.events-preview-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+.events-preview-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:2.5rem 2rem;
+  align-content:start;
+}
+
+.events-preview-date{
+  display:block;
+  font-family:var(--sans);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:1.1rem;
+}
+
+.events-preview-item h3{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(1.5rem, 2.4vw, 2rem);
+  line-height:1.25;
+  margin-bottom:.6rem;
+}
+
+.events-preview-subtitle{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  color:var(--muted);
+}
+
+.events-preview-more{
+  align-self:flex-end;
+  margin-top:2.5rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  transition:border-color .2s ease, background .2s ease, color .2s ease, gap .2s ease;
+}
+
+.events-preview-more::after{
+  content:'\2192'; /* → */
+  font-size:.85rem;
+}
+
+.events-preview-more:hover{
+  gap:.85rem;
 }
 
 /* ---------- Events ---------- */
@@ -904,6 +988,8 @@ body.bio-page .hero-fixed{
    more of what's below. */
 body.bio-page .hero-bg{
   background-position:center 12%;
+  -webkit-mask-image:linear-gradient(90deg, transparent 0%, black 22%);
+  mask-image:linear-gradient(90deg, transparent 0%, black 22%);
 }
 
 /* No uniform dark wash across the photo — it should read bright, like
@@ -914,19 +1000,23 @@ body.bio-page .hero-bg{
    width, over both zones). */
 body.bio-page .hero-fixed::after{
   background:
-    linear-gradient(90deg, rgba(8,7,6,.55) 0%, rgba(8,7,6,0) 14%),
+    linear-gradient(90deg, rgba(8,7,6,.3) 0%, rgba(8,7,6,0) 18%),
     linear-gradient(180deg, rgba(8,7,6,.45) 0%, rgba(8,7,6,0) 16%);
 }
 
 /* Text column: left-aligned, fixed width, sitting entirely on the
    page's solid black background rather than centered across the full
    width the way other inner pages are. */
+body.bio-page .content{
+  width:54vw;
+}
+
 body.bio-page .content-overlay .page-lead,
 body.bio-page .content-overlay .section{
-  margin:0;
+  margin:0 0 0 auto;
   max-width:600px;
-  padding-left:3.5rem;
-  padding-right:2.5rem;
+  padding-left:2rem;
+  padding-right:3rem;
 }
 
 /* The scrim/blur other inner-page panels need (because their text can
@@ -940,8 +1030,9 @@ body.bio-page .content-overlay .section{
 }
 
 body.bio-page .footer{
+  width:54vw;
   text-align:left;
-  padding-left:3.5rem;
+  padding-left:2rem;
 }
 
 /* ---------- Responsive ---------- */
@@ -1011,6 +1102,24 @@ body.bio-page .footer{
   .media-hero{height:52vh;min-height:320px;}
   .event-grid{grid-template-columns:1fr;}
 
+  .events-preview-inner{
+    flex-direction:column;
+    gap:2rem;
+  }
+  .events-preview-image{
+    flex-basis:auto;
+    width:100%;
+    aspect-ratio:auto;
+  }
+  .events-preview-image img{
+    height:auto;
+    object-fit:contain;
+  }
+  .events-preview-grid{
+    grid-template-columns:1fr;
+    gap:2rem;
+  }
+
   /* Biography: the side-by-side split needs desktop width to work.
      Below 820px, fall back to the same full-bleed-with-scrim pattern
      the other inner pages use, so the photo becomes a shorter band up
@@ -1019,6 +1128,11 @@ body.bio-page .footer{
     width:100%;
     left:0;
     right:0;
+  }
+
+  body.bio-page .content,
+  body.bio-page .footer{
+    width:100%;
   }
 
   body.bio-page .hero-fixed::after{

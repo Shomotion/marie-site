@@ -157,9 +157,23 @@ document.addEventListener("click", (event) => {
   }
 
   // Click on the ::backdrop itself (not any element inside the dialog)
-  // dispatches with the <dialog> as event.target — the standard
-  // "light dismiss" pattern for <dialog>.
+  // dispatches with the <dialog> as event.target — including clicks that
+  // land on the dialog's own padding box (e.g. near its edges, or in the
+  // gap between .event-instance blocks), since there's no child element
+  // under the cursor there either. tagName alone can't tell those apart
+  // from a genuine backdrop click, so we compare the click coordinates
+  // against the dialog's actual rendered box instead: only close when
+  // the click falls outside it.
   if (event.target.tagName === "DIALOG") {
-    event.target.close();
+    const rect = event.target.getBoundingClientRect();
+    const inBounds =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+ 
+    if (!inBounds) {
+      event.target.close();
+    }
   }
 });

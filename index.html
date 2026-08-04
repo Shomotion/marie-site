@@ -101,6 +101,29 @@
     </p>
   </section>
 
+  <!-- Compact preview of the first few upcoming events, pulled from the
+       same events.json that powers events.html (see home-events.js).
+       "More" only appears for an event that actually has performance
+       details attached — same hasDialogContent rule events.html uses —
+       and deep-links to that event's dialog on events.html. -->
+  <section id="events-preview" class="section section-wide events-preview">
+    <h2>Upcoming Events</h2>
+    <div class="events-preview-inner">
+      <div class="events-preview-image">
+        <img src="assets/home2.jpg" alt="Annemarie Schubert on stage" loading="lazy">
+      </div>
+      <div class="events-preview-content">
+        <div class="events-preview-grid" id="events-preview-grid">
+          <!-- Populated at runtime -->
+        </div>
+        <a class="btn events-preview-more" href="events.html">More</a>
+      </div>
+    </div>
+    <noscript>
+      <p>Please enable JavaScript to view upcoming events.</p>
+    </noscript>
+  </section>
+
   <!-- <section id="events" class="section">
     <span class="eyebrow">Events</span>
     <h2>Upcoming performances</h2>
@@ -147,5 +170,6 @@
 
 <script src="script.js"></script>
 <script src="nav.js"></script>
+<script src="home-events.js"></script>
 </body>
 </html>
