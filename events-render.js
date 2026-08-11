@@ -43,8 +43,9 @@
 // only put trusted text there, since it isn't escaped.
 
 async function loadEvents() {
-  const grid = document.getElementById("event-grid");
-  if (!grid) return;
+  const upcomingGrid = document.getElementById("event-grid-upcoming");
+  const pastGrid = document.getElementById("event-grid-past");
+  if (!upcomingGrid && !pastGrid) return;
 
   let events;
   try {
@@ -53,11 +54,61 @@ async function loadEvents() {
     events = await response.json();
   } catch (err) {
     console.error("Could not load events.json:", err);
-    grid.innerHTML = '<p class="event-load-error">Events could not be loaded right now.</p>';
+    (upcomingGrid || pastGrid).innerHTML = '<p class="event-load-error">Events could not be loaded right now.</p>';
     return;
   }
 
-  events.forEach((event) => grid.appendChild(renderEventCard(event)));
+  const today = startOfToday();
+  const withDates = events
+    .filter((event) => event.id)
+    .map((event) => ({ event, endDate: parseDateField(event, "endDate") }));
+
+  const upcoming = withDates
+    .filter((e) => e.endDate && e.endDate >= today)
+    .sort((a, b) => a.endDate - b.endDate)
+    .map((e) => e.event);
+
+  const past = withDates
+    .filter((e) => !e.endDate || e.endDate < today)
+    .sort((a, b) => (b.endDate || 0) - (a.endDate || 0))
+    .map((e) => e.event);
+
+  if (upcomingGrid) {
+    if (upcoming.length) {
+      upcoming.forEach((event) => upcomingGrid.appendChild(renderEventCard(event)));
+    } else {
+      upcomingGrid.closest(".section")?.querySelector(".event-section-empty")?.removeAttribute("hidden");
+    }
+  }
+
+  if (pastGrid) {
+    past.forEach((event) => pastGrid.appendChild(renderEventCard(event)));
+  }
+}
+
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function parseDateField(event, field) {
+  if (!event[field]) {
+    console.warn(`Event "${event.id}" has no "${field}" — it may be excluded or mis-sorted.`);
+    return null;
+  }
+  const d = new Date(`${event[field]}T00:00:00`);
+  return isNaN(d) ? null : d;
+}
+
+// Returns "upcoming" | "ongoing" | "past" | null (null = can't determine, treat as past)
+function getEventStatus(event, today = startOfToday()) {
+  const start = parseDateField(event, "startDate");
+  const end = parseDateField(event, "endDate");
+  if (!start || !end) return null;
+  if (today < start) return "upcoming";
+  if (today > end) return "past";
+  return "ongoing";
 }
 
 // Builds the HTML for each non-empty performance entry, including its

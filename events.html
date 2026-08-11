@@ -74,13 +74,23 @@
 </section>
 
 <section class="section section-wide">
-<div class="event-grid" id="event-grid">
-<!-- Populated at runtime from events.json — see events-render.js -->
-</div>
-<noscript>
-<p>Please enable JavaScript to view upcoming events.</p>
-</noscript>
+  <h2 class="event-section-heading">Upcoming</h2>
+  <div class="event-grid" id="event-grid-upcoming">
+    <!-- Populated at runtime from events.json — see events-render.js -->
+  </div>
+  <p class="event-section-empty" hidden>No upcoming performances scheduled right now.</p>
 </section>
+
+<section class="section section-wide">
+  <h2 class="event-section-heading">Past</h2>
+  <div class="event-grid" id="event-grid-past">
+    <!-- Populated at runtime from events.json — see events-render.js -->
+  </div>
+</section>
+
+<noscript>
+  <p>Please enable JavaScript to view upcoming events.</p>
+</noscript>
 
 <footer class="footer">
 <p>&copy; 2026 Annemarie Schubert. All rights reserved.</p>

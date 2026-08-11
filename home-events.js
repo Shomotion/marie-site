@@ -36,13 +36,48 @@ async function loadEventsPreview() {
     return;
   }
 
-  const upcoming = events.filter((event) => event.id).slice(0, PREVIEW_COUNT);
+  const upcoming = getUpcoming(events).slice(0, PREVIEW_COUNT);
   if (!upcoming.length) {
     grid.closest(".events-preview")?.remove();
     return;
   }
 
   upcoming.forEach((event) => grid.appendChild(renderPreviewItem(event)));
+}
+
+function getUpcoming(events) {
+  const today = startOfToday();
+  return events
+    .filter((event) => event.id)
+    .map((event) => ({ event, status: getEventStatus(event, today), start: parseDateField(event, "startDate") }))
+    .filter((e) => e.status === "upcoming" || e.status === "ongoing")
+    .sort((a, b) => a.start - b.start)
+    .map((e) => e.event);
+}
+
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function parseDateField(event, field) {
+  if (!event[field]) {
+    console.warn(`Event "${event.id}" has no "${field}" — it may be excluded or mis-sorted.`);
+    return null;
+  }
+  const d = new Date(`${event[field]}T00:00:00`);
+  return isNaN(d) ? null : d;
+}
+
+// Returns "upcoming" | "ongoing" | "past" | null (null = can't determine, treat as past)
+function getEventStatus(event, today = startOfToday()) {
+  const start = parseDateField(event, "startDate");
+  const end = parseDateField(event, "endDate");
+  if (!start || !end) return null;
+  if (today < start) return "upcoming";
+  if (today > end) return "past";
+  return "ongoing";
 }
 
 function renderPreviewItem(event) {
