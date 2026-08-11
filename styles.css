@@ -58,7 +58,7 @@ a{color:inherit;text-decoration:none;}
 /* Biography uses its own photo instead of the shared hero image.
    Same background-size/position as .hero-bg, just a different file. */
 body.bio-page .hero-bg{
-  background-image:url('assets/bio.jpg');
+  background-image:url('assets/2.jpg');
 }
 
 /* Contact likewise uses its own photo. Lower vertical % than the shared

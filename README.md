@@ -74,50 +74,14 @@ move as one unit, anchored to the black content rather than to the photo.
 The four inner pages don't use `.content` at all — see "Two different
 layouts, by design" above for how `.content-overlay` differs.
 
-## The scroll bounce
-
-There's no custom JS for this — it's the browser's native rubber-band/
-elastic overscroll, which runs automatically when you scroll past the top
-or bottom of the page on a trackpad in Safari/Chrome on macOS (and on
-touchscreens generally). `styles.css` just makes sure nothing disables it
-(`overscroll-behavior` is left at its default `auto`).
-
-This is also almost certainly what the original site was relying on —
-Elementor doesn't ship custom bounce-physics JS either. A hand-rolled
-JavaScript version (intercepting `wheel` events and animating a transform)
-was tried here first and removed, because it can't access real trackpad
-touch state the way the OS can, so it either fights the gesture while
-you're mid-scroll or can't tell a paused two-finger drag from a released
-one. The native version has neither problem, and needs zero code.
-
-One consequence: on platforms without native elastic scrolling (Windows,
-most of Linux, a plain mouse wheel), there's simply no bounce. That
-matches how the original behaves there too.
-
 ## Setup
-
-1. Drop your background photo into `assets/hero.jpg` (replace the file name
-   or update the `background-image` path in `styles.css` under `.hero-bg`
-   — it's referenced once, so it applies to every page).
-2. Open `index.html` in a browser to preview locally, or run a tiny local
-   server (recommended so relative paths behave the same as on GitHub):
-   ```
-   cd site
-   python3 -m http.server 8000
-   ```
-   then visit `http://localhost:8000`.
-
-## Deploying to GitHub Pages
-
-1. Create a new GitHub repo and push this folder's contents to it (this
-   `README.md`, the five `.html` files, `styles.css`, `script.js`, and
-   `assets/` should sit at the repo root, or inside `/docs` if you prefer
-   that convention).
-2. In the repo: **Settings → Pages → Build and deployment → Source**, choose
-   **Deploy from a branch**, pick `main` (or `master`) and `/ (root)` (or
-   `/docs`), then save.
-3. GitHub will publish at `https://<username>.github.io/<repo-name>/`
-   within a minute or two.
+Open `index.html` in a browser to preview locally, or run a tiny local
+server (recommended so relative paths behave the same as on GitHub):
+```
+cd site
+python3 -m http.server 8000
+```
+then visit `http://localhost:8000`.
 
 ## Customizing
 
